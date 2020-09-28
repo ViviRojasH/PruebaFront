@@ -1,6 +1,6 @@
 <template>
 <div>
-    <h1>Personajes Component</h1>
+    <h1>Rick and Morty</h1>
     <br>
     <b-container class="bv-example-row">
         <b-row>
@@ -8,7 +8,7 @@
             <template v-for="(person, index) in personajes">
                 <b-col cols="3" :key="index" deck>
                     <b-card :img-src="person.image" :title="person.name">
-                        <b-button href="#" variant="primary" v-b-modal.infoPersonaje v-on:click="verInfo(person)">Biografia</b-button>
+                        <b-button href="#" variant="primary" v-b-modal.infoPersonaje v-on:click="verInfo(person)">Más información</b-button>
                     </b-card>
                     <br>
                 </b-col>
@@ -23,8 +23,22 @@
             </ul>
         </nav>
     </b-container>
-    <b-modal ok-only id="infoPersonaje" title="Infomacón Personaje">
+    <b-modal ok-only id="infoPersonaje" size="lg" scrollable=true>
         <h1>{{dataPersonaje.nombre}}</h1>
+        <b-card :img-src="dataPersonaje.imagen" img-alt="Card image" img-left v-b-scrollspy fluid-grow>
+            <b-card-text>
+
+                <strong>Estado:</strong> {{dataPersonaje.estado}}<br>
+                <strong>Especie:</strong> {{dataPersonaje.especie}}<br>
+                <strong>Genero:</strong> {{dataPersonaje.genero}}
+                <h2>Capitulos:</h2>
+                <div v-for="(capitulo, index) in dataPersonaje.capitulos" :key="index">
+                    <b-link href="capitulo">{{capitulo}}</b-link>
+                </div>
+
+            </b-card-text>
+        </b-card>
+
     </b-modal>
 </div>
 </template>
@@ -38,7 +52,8 @@ export default {
             numPage: 1,
             ulrNext: "",
             urlPrevius: "",
-            dataPersonaje: {}
+            dataPersonaje: {},
+
         }
     },
 
@@ -62,15 +77,20 @@ export default {
 
         },
         verInfo(personaje) {
-            //alert(personaje.name + personaje.status + personaje.species);
             fetch('https://rickandmortyapi.com/api/character/' + personaje.id)
                 .then(response => response.json())
                 .then(res => {
                     console.log(res)
                     this.dataPersonaje = {
-                        nombre: res.name
+                        nombre: res.name,
+                        imagen: res.image,
+                        estado: res.status,
+                        especie: res.species,
+                        genero: res.gender,
+                        capitulos: res.episode
                     }
                 });
+
         },
         linkGen(pageNum) {
             console.log(pageNum)
